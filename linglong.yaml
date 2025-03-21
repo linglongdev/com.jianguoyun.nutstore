@@ -1,0 +1,64 @@
+version: "1"
+
+package:
+  id: com.jianguoyun.nutstore
+  name: 坚果云
+  version: 6.3.2.0
+  kind: app
+  description: |
+    任何设备，随时随地实现文件共享
+
+command: [start-jianguoyun.bash] #the commands that your application need to run.
+
+base: org.deepin.base/23.1.0 #set the base environment, this can be changed.
+
+buildext:
+  apt:
+    build_depends: [systemd]
+    depends:
+      [
+        python3-gi,
+        gir1.2-gtk-3.0,
+        gir1.2-notify-0.7,
+        libswt-gtk-4-java,
+        libwebkit2gtk-4.0-37,
+        gir1.2-ayatanaappindicator3-0.1,
+      ]
+
+permissions:
+  binds:
+    # webkit2gtk 只会在指定目录查找二进制，所以将目录挂载到可写目录，再启动前复制webkit2gtk二进制到里面
+    - source: "/tmp"
+      destination: "/usr/lib/x86_64-linux-gnu/webkit2gtk-4.0"
+
+build: |
+  mkdir -p $PREFIX/etc
+  echo "export GI_TYPELIB_PATH=$PREFIX/lib/x86_64-linux-gnu/girepository-1.0" >> $PREFIX/etc/profile
+  echo "export PYTHONPATH=$PREFIX/lib/python3/dist-packages" >> $PREFIX/etc/profile
+  echo "export WEBKIT_EXEC_PATH=$PREFIX/lib/x86_64-linux-gnu/webkit2gtk-4.0" >> $PREFIX/etc/profile
+  echo "$PREFIX/lib/jni" >> $PREFIX/etc/ld.so.conf
+  # 解压安装包
+  mkdir -p $PREFIX/jianguoyun
+  tar -xvf linglong/sources/nutstore_linux_dist_x64.tar.gz -C $PREFIX/jianguoyun
+  # 安装桌面文件
+  mkdir -p $PREFIX/share/applications
+  cp nutstore-menu.desktop $PREFIX/share/applications
+  # 安装图标文件
+  mkdir -p $PREFIX/share/icons/hicolor/512x512/apps
+  cp nutstore.png $PREFIX/share/icons/hicolor/512x512/apps
+  # 为 start-jianguoyun.bash 准备的环境变量，旧版本客户端运行应用时没有PREFIX变量
+  echo "export PREFIX=$PREFIX" >> $PREFIX/etc/profile
+  mkdir -p $PREFIX/bin/
+  # 自定义启动脚本
+  cp start-jianguoyun.bash $PREFIX/bin/start-jianguoyun.bash
+  # 给 base 打补丁 
+  mkdir -p $PREFIX/base_patch/bin
+  echo "PATH=$PREFIX/base_patch/bin:\$PATH" >> $PREFIX/etc/profile
+  # base中的xdg-open无法打开带空格的目录
+  cp xdg-open $PREFIX/base_patch/bin
+  # xdg-open需要systemd-run, base里面没有
+  cp /usr/bin/systemd-run $PREFIX/base_patch/bin
+sources:
+  - kind: file
+    url: https://www.jianguoyun.com/static/exe/installer/nutstore_linux_dist_x64.tar.gz
+    digest: 64ae506fa339e05119f7ca96139c1d65824b3e49a1af6488ee2c4fdc72dd6809
