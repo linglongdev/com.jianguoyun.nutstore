@@ -3,7 +3,7 @@ version: "1"
 package:
   id: com.jianguoyun.nutstore
   name: 坚果云
-  version: 6.3.2.3
+  version: 6.4.0.1
   kind: app
   description: |
     任何设备，随时随地实现文件共享
@@ -39,7 +39,7 @@ build: |
   echo "$PREFIX/lib/jni" >> $PREFIX/etc/ld.so.conf
   # 解压安装包
   mkdir -p $PREFIX/jianguoyun
-  tar -xvf linglong/sources/nutstore_linux_dist_x64.tar.gz -C $PREFIX/jianguoyun
+  tar --no-same-owner -xvf linglong/sources/nutstore_linux_dist_x64.tar.xz -C $PREFIX/jianguoyun
   # 安装桌面文件
   mkdir -p $PREFIX/share/applications
   cp nutstore-menu.desktop $PREFIX/share/applications
@@ -59,6 +59,8 @@ build: |
   # xdg-open需要systemd-run, base里面没有
   cp /usr/bin/systemd-run $PREFIX/base_patch/bin
 sources:
+  # 从官网下载的dist版本太旧，会在应用启动后自动升级，这里直接使用升级后的最新dist
   - kind: file
-    url: https://www.jianguoyun.com/static/exe/installer/nutstore_linux_dist_x64.tar.gz
-    digest: 64ae506fa339e05119f7ca96139c1d65824b3e49a1af6488ee2c4fdc72dd6809
+    url: https://share.cicd.getdeepin.org/nutstore_linux_dist_x64_6.4.0.tar.xz
+    digest: 7a700da47c60e6dbe83355115f91af3a77b6e28f52c974dcda57a4b9f6c2d5f9
+    name: nutstore_linux_dist_x64.tar.xz
