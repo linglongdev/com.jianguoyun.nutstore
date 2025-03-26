@@ -3,7 +3,7 @@ version: "1"
 package:
   id: com.jianguoyun.nutstore
   name: 坚果云
-  version: 6.3.2.0
+  version: 6.3.2.3
   kind: app
   description: |
     任何设备，随时随地实现文件共享

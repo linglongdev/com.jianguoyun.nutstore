@@ -5,7 +5,7 @@ set -e
 cp -r $WEBKIT_EXEC_PATH/* /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/
 
 # 坚果云会自升级，所以主程序不能放在/opt目录
-installDir="$HOME/.nutstore/linglong_dist"
+installDir="$HOME/.nutstore/dist"
 if [ ! -d "$installDir" ]; then
     rm -rf ~/.nutstore/linglong_dist_tmp
     mkdir -p ~/.nutstore/linglong_dist_tmp
