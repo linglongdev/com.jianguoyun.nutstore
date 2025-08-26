@@ -1,0 +1,5 @@
+export APP_DIR=$PREFIX
+export PYTHONPATH=$PREFIX/lib/python3/dist-packages
+export GI_TYPELIB_PATH=$PREFIX/lib/x86_64-linux-gnu/girepository-1.0
+export WEBKIT_EXEC_PATH_LINK=$WEBKIT_EXEC_PATH_LINK
+export WEBKIT_EXEC_PATH_TARGET=$WEBKIT_EXEC_PATH_TARGET
